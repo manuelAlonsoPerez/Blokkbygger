@@ -3,10 +3,9 @@ import { createElement } from "react";
 import { Blokkbygger } from "./components/Blokkbygger";
 import type { BlokkbyggerConfig, BlokkbyggerInstance } from "./types/domain";
 
-const DEFAULTS: Required<Omit<BlokkbyggerConfig, "initialBlocks" | "onBlockChange">> = {
+const DEFAULTS: Required<Omit<BlokkbyggerConfig, "initialBlocks" | "onBlockChange" | "majorityThreshold">> = {
   apiUrl: "https://valg.nrk.no/api/2025/st",
   pollIntervalMs: 30_000,
-  majorityThreshold: 85,
   locale: "nb",
 };
 

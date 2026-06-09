@@ -20,7 +20,7 @@ interface BlokkbyggerProps {
   apiUrl: string;
   pollIntervalMs: number;
   initialBlocks?: BlockState;
-  majorityThreshold: number;
+  majorityThreshold?: number;
   onBlockChange?: (state: BlockState) => void;
 }
 
@@ -30,13 +30,14 @@ export function Blokkbygger({
   apiUrl,
   pollIntervalMs,
   initialBlocks,
-  majorityThreshold,
+  majorityThreshold: manualThreshold,
   onBlockChange,
 }: BlokkbyggerProps) {
-  const { parties, lastUpdated, isLoading, error } = useElectionData(
-    apiUrl,
-    pollIntervalMs,
-  );
+  const { parties, totalMandates, lastUpdated, isLoading, error } =
+    useElectionData(apiUrl, pollIntervalMs);
+
+  const majorityThreshold =
+    manualThreshold ?? (totalMandates > 0 ? Math.ceil(totalMandates / 2) : 85);
   const { blocks, moveParty } = useBlockState(parties, initialBlocks);
 
   const sensors = useSensors(

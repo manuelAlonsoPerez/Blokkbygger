@@ -10,7 +10,6 @@ createRoot(root).render(
     <Blokkbygger
       apiUrl="https://valg.nrk.no/api/2025/st"
       pollIntervalMs={30_000}
-      majorityThreshold={85}
       onBlockChange={(state) => {
         console.log("Block state changed:", state);
       }}
