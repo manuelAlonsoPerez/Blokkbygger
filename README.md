@@ -270,7 +270,7 @@ Override CSS custom properties from the host. All variables are prefixed with `-
 }
 ```
 
-The full list of CSS custom properties is documented in `HIGH_ORDER_FUNCTIONALITY.md` (Section 7).
+The full list of CSS custom properties is documented in `HIGH_ORDER_FUNCTIONALITY.md` (Section 8).
 
 ---
 

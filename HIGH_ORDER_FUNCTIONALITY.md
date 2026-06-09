@@ -230,7 +230,31 @@ A simple alert banner rendered conditionally when the API fetch fails.
 
 ---
 
-## 6. Data Transformation
+## 6. Centralized Configuration (`config.ts`)
+
+**File**: `src/config.ts`
+
+All configurable constants are centralized in a single file to avoid magic numbers and duplicated strings across the codebase.
+
+| Constant | Value | Used by |
+|---|---|---|
+| `API_URL` | `"https://valg.nrk.no/api/2025/st"` | `mount.ts`, `dev/main.tsx` |
+| `POLL_INTERVAL_MS` | `30_000` | `mount.ts`, `dev/main.tsx` |
+| `DEFAULT_LOCALE` | `"nb"` | `mount.ts` |
+| `DEFAULT_MAJORITY_FALLBACK` | `85` | `Blokkbygger.tsx` (used before API loads) |
+| `DRAG_ACTIVATION_DISTANCE_PX` | `5` | `Blokkbygger.tsx` (PointerSensor threshold) |
+| `DEFAULT_LEFT_PARTIES` | `["RØDT", "SV", "A", "MDG"]` | `useBlockState.ts` |
+| `DEFAULT_RIGHT_PARTIES` | `["V", "H", "FRP", "KRF"]` | `useBlockState.ts` |
+| `NATIONWIDE_CATEGORY` | `1` | `transformApiData.ts` |
+| `ANDRE_PARTY_ID` | `"andre"` | `transformApiData.ts` |
+| `ANDRE_PARTY_NAME` | `"An."` | `transformApiData.ts` |
+| `ANDRE_PARTY_COLOR` | `"#999999"` | `transformApiData.ts` |
+
+Changing the API endpoint, party distributions, or any tuning parameter only requires editing this file.
+
+---
+
+## 7. Data Transformation
 
 **File**: `src/utils/transformApiData.ts`
 
@@ -247,7 +271,7 @@ This produces a stable `Party[]` array where:
 
 ---
 
-## 7. Styling Strategy
+## 8. Styling Strategy
 
 All styles use **CSS Modules** (`*.module.css`). At build time, Vite hashes every class name (e.g., `.container` becomes `._container_1a2b3`), guaranteeing no collisions with the host system's styles.
 
@@ -290,7 +314,7 @@ The host overrides any of these on the container element:
 
 ---
 
-## 8. Interaction Model
+## 9. Interaction Model
 
 ### Drag and Drop
 
@@ -328,7 +352,7 @@ This is provided by `@dnd-kit` with no additional code.
 
 ---
 
-## 9. Error Handling
+## 10. Error Handling
 
 The system handles errors at two levels:
 
@@ -345,7 +369,7 @@ The key principle is **graceful degradation**: the component never goes blank af
 
 ---
 
-## 10. Architecture Pattern: Composition + Custom Hooks
+## 11. Architecture Pattern: Composition + Custom Hooks
 
 ### The pattern we use
 
@@ -402,59 +426,114 @@ We chose **not** to use HOCs for the following reasons:
 
 **Bottom line**: HOCs solve the problem of reusing logic across components, but hooks solve the same problem with less indirection, better TypeScript support, and no wrapper layers. Since React 16.8 introduced hooks, HOCs are considered a legacy pattern — React's own documentation recommends hooks for new code.
 
-### Why not Render Props?
+---
 
-The render prop pattern passes a function as a prop to control what a component renders:
+## 12. Testing Strategy
 
-```typescript
-// Render prop approach (not used)
-<ElectionDataProvider
-  apiUrl="https://valg.nrk.no/api/2025/st"
-  render={({ parties, error }) => (
-    <BlockManager parties={parties}>
-      {({ blocks, moveParty }) => (
-        <div>
-          <Block partyIds={blocks.left} parties={parties} />
-        </div>
-      )}
-    </BlockManager>
-  )}
-/>
-```
+The test suite is organized into three layers that together cover data transformation, hook behavior, component rendering, and full browser interactions.
 
-We avoided render props because:
+### 12.1 Test Infrastructure
 
-- **Nesting depth**: Each layer of shared logic adds another level of callback indentation. With two hooks (data + block state), we would already have two levels of nesting inside the JSX.
-- **Readability**: The logic that provides data is visually far from the JSX that consumes it, separated by layers of callbacks.
-- **Same problem hooks solve**: Render props were the pre-hooks solution for sharing stateful logic. Hooks are strictly simpler for the same use case.
+| Tool | Role | Config file |
+|---|---|---|
+| **Vitest 3** | Unit and integration tests | `vitest.config.ts` |
+| **@testing-library/react** | React component rendering and assertions | — |
+| **jsdom** | In-process browser DOM for Vitest | `vitest.config.ts` → `environment: "jsdom"` |
+| **@testing-library/jest-dom** | Extended DOM matchers (`toBeInTheDocument`, etc.) | `tests/setup.ts` |
+| **Playwright** | End-to-end browser tests (Chromium) | `playwright.config.ts` |
 
-### Why not Component Prop?
+Vitest and Playwright are configured to avoid file collisions:
+- `vitest.config.ts` sets `exclude: ["tests/e2e/**"]` so Vitest does not try to collect Playwright specs.
+- `playwright.config.ts` sets `testDir: "./tests/e2e"` so Playwright only looks in its own directory.
 
-The component prop pattern passes a component reference to a wrapper:
+### 12.2 Test Fixtures
 
-```typescript
-// Component prop approach (not used)
-<Wrapper component={PartyCard} partyData={party} />
-```
+**File**: `tests/fixtures/electionData.ts`
 
-This pattern is useful when a parent needs to render an **interchangeable** child — e.g., a list component that accepts different row renderers. In our case, `Block` always renders `PartyCard`. There is no scenario where a `Block` would render a different kind of card, so the flexibility of the component prop pattern adds nothing.
+A single fixture file provides deterministic mock data for all test layers:
 
-### Why not Context for everything?
-
-React Context is used in our solution indirectly through `@dnd-kit` (`DndContext` provides drag state to all descendants). We considered using a custom Context for election data and block state, but decided against it:
-
-- **Only one consumer**: `Blokkbygger` is the only component that needs both `parties` and `blocks`. Putting them in Context would add a Provider/Consumer pair for a single consumer — unnecessary abstraction.
-- **Prop drilling is shallow**: The component tree is only 3 levels deep (`Blokkbygger → Block → PartyCard`). Props pass naturally without pain.
-- **Embeddable isolation**: Each `mount()` call creates an independent React tree. Context is scoped to a tree by default, so multiple instances already get isolated state. Hooks with local state avoid shared-reference pitfalls.
-
-If the component tree grew deeper or more components needed direct access to election data, introducing a `BlokkbyggerContext` would be the right next step.
-
-### When would we reconsider?
-
-| Scenario | Pattern to adopt |
+| Export | Purpose |
 |---|---|
-| Multiple unrelated components need election data | Keep the hook — it's already reusable as-is |
-| Host system needs to swap `PartyCard` for a custom renderer | Add a **component prop** or **render prop** to `Block` for the card renderer |
-| Cross-cutting analytics/tracking on every interactive element | A **HOC** like `withTracking(PartyCard)` could make sense to avoid repetition |
-| Deep component tree (5+ levels) needing shared state | Introduce a **React Context** provider at the `Blokkbygger` level |
-| Multiple `mount()` instances need shared state (e.g., synced blocks) | External state manager (Zustand, or a shared Context above both trees) |
+| `MOCK_ELECTION_RESPONSE` | Complete API response with realistic party data (category 1 and category 2 parties, mandates, percentages, timestamps) |
+| `MOCK_EMPTY_RESPONSE` | API response with an empty `partpiForsamling` array — tests the "no parties" edge case |
+| `buildApiPartyWithNullPercent()` | Factory function returning a party with `stemmer.prosent: null` — tests the NaN guard path |
+
+Both Vitest unit tests and Playwright E2E tests use the same mock data, ensuring consistent expectations across layers.
+
+### 12.3 Unit Tests
+
+#### `transformApiData.test.ts` (7 tests)
+
+Tests the pure function that converts raw API data into the `Party[]` domain model:
+
+- Filters to only category 1 (nationwide) parties
+- Aggregates all other categories into a synthetic "An." party
+- Guards against `null`/`undefined` percentage values (prevents NaN)
+- Rounds percentages to one decimal place
+- Preserves party ordering from the API
+- Always produces the "An." entry, even with zero mandates
+- Returns an empty array for empty input
+
+#### `useElectionData.test.ts` (14 tests)
+
+Tests the API hook in isolation using `@testing-library/react`'s `renderHook`, with `globalThis.fetch` mocked:
+
+- Fetches data on mount and exposes `parties`, `lastUpdated`, metadata
+- Extracts `totalMandates`, `turnoutPercent`, `countedPercent` from response
+- Sets `error` on HTTP non-200 responses (e.g., 500)
+- Sets `error` on network failures (fetch throws)
+- Preserves last-good data when a subsequent fetch fails
+- Clears error state on recovery after a failure
+- Polls at the configured interval
+- Cleans up the interval timer on unmount
+- Supports custom API URLs
+
+### 12.4 Integration Tests
+
+#### `ErrorHandling.test.tsx` (9 tests)
+
+Renders the full `<Blokkbygger>` component with mocked `fetch` to test UI behavior:
+
+- Shows loading state before data arrives
+- Renders party cards after successful fetch
+- Displays `ErrorBanner` when the API returns an error
+- Graceful degradation: data from a successful fetch persists alongside the error banner
+- Banner disappears on recovery (next successful poll)
+- Header displays correct stats (Frammøte, Opptalt, Mandater, Flertall)
+
+### 12.5 End-to-End Tests (Playwright)
+
+#### `blokkbygger.spec.ts` (19 tests)
+
+Runs in a real Chromium browser against the dev server. API responses are intercepted via `page.route()` so tests are deterministic and offline-capable.
+
+| Group | Tests |
+|---|---|
+| Component loading | Party cards render, three block sections visible, block labels present |
+| Header | Title, election stats (Frammøte %, Opptalt %, Mandater, Flertall), "Sist oppdatert" timestamp |
+| Default distribution | Left-wing parties in Venstre, right-wing in Høyre, remainder in Nøytral |
+| Mandate counters | Block totals (e.g., "72", "68"), "/169 mandater" label, no false majority |
+| Party cards | Name, mandates, percentage, `data-testid`, ARIA attributes |
+| Drag and drop | Real mouse drag: SP from Nøytral → Venstre, MDG from Venstre → Høyre |
+| Error handling | HTTP 500 → error banner, recovery clears banner, data persists during error |
+
+**API mocking approach**: All E2E tests intercept `**/api/2025/st` with `page.route()` and fulfill with the shared fixture data. Tests that simulate error recovery re-route the same URL to a success response mid-test.
+
+### 12.6 Console Output
+
+**File**: `tests/utils/testLogger.ts`
+
+All test files import a shared logger that prints structured, ANSI-colored output to the console:
+
+```
+ SUITE  transformApiData
+────────────────────────────────────────────────────────
+
+   TEST   filters to category 1 parties only
+  │  → Calling transformApiData with mock response
+  │    ↳ Result count: 8
+  │
+  └   PASS  Only nationwide parties are returned
+```
+
+This makes test runs easy to follow in CI logs without needing a separate reporter. The logger provides `suite()`, `spec()`, `step()`, `data()`, `pass()`, and `fail()` functions.
