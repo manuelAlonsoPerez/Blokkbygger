@@ -15,12 +15,12 @@ export function transformApiData(response: ElectionResponse): Party[] {
         name: apiParty.parti.navn.nb,
         shortName: apiParty.parti.kortNavn,
         mandates: apiParty.mandater.antall,
-        percentage: apiParty.stemmer.prosent,
+        percentage: apiParty.stemmer.prosent ?? 0,
         color: apiParty.parti.farge,
       });
     } else {
       andreMandater += apiParty.mandater.antall;
-      andreProsent += apiParty.stemmer.prosent;
+      andreProsent += apiParty.stemmer.prosent ?? 0;
     }
   }
 
@@ -29,7 +29,7 @@ export function transformApiData(response: ElectionResponse): Party[] {
     name: "An.",
     shortName: "An.",
     mandates: andreMandater,
-    percentage: Math.round(andreProsent * 10) / 10,
+    percentage: andreProsent ? Math.round(andreProsent * 10) / 10 : 0,
     color: ANDRE_COLOR,
   });
 

@@ -3,12 +3,33 @@ import type { Party, BlockId, BlockState } from "../types/domain";
 
 const EMPTY_BLOCKS: BlockState = { left: [], neutral: [], right: [] };
 
+const DEFAULT_LEFT = new Set(["RØDT", "SV", "A", "MDG"]);
+const DEFAULT_RIGHT = new Set(["V", "H", "FRP", "KRF"]);
+
 function allBlocksEmpty(blocks: BlockState): boolean {
   return (
     blocks.left.length === 0 &&
     blocks.neutral.length === 0 &&
     blocks.right.length === 0
   );
+}
+
+function buildDefaultBlocks(parties: Party[]): BlockState {
+  const left: string[] = [];
+  const neutral: string[] = [];
+  const right: string[] = [];
+
+  for (const party of parties) {
+    if (DEFAULT_LEFT.has(party.id)) {
+      left.push(party.id);
+    } else if (DEFAULT_RIGHT.has(party.id)) {
+      right.push(party.id);
+    } else {
+      neutral.push(party.id);
+    }
+  }
+
+  return { left, neutral, right };
 }
 
 export function useBlockState(
@@ -21,11 +42,7 @@ export function useBlockState(
 
   useEffect(() => {
     if (parties.length > 0 && !initialBlocks && allBlocksEmpty(blocks)) {
-      setBlocks({
-        left: [],
-        neutral: parties.map((p) => p.id),
-        right: [],
-      });
+      setBlocks(buildDefaultBlocks(parties));
     }
     // Only run when parties first load
     // eslint-disable-next-line react-hooks/exhaustive-deps

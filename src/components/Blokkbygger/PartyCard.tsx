@@ -31,7 +31,7 @@ export function PartyCard({ party }: PartyCardProps) {
       <span className={styles.dot} style={{ backgroundColor: party.color }} />
       <span className={styles.name}>{party.shortName}</span>
       <span className={styles.mandates}>{party.mandates} mandater</span>
-      <span className={styles.percent}>{party.percentage}%</span>
+      <span className={styles.percent}>{party.percentage || 0}%</span>
     </div>
   );
 }
