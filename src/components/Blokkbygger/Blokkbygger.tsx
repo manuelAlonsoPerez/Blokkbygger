@@ -7,10 +7,10 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import type { BlockId, BlockState } from "../types/domain";
-import { useElectionData } from "../hooks/useElectionData";
-import { useBlockState } from "../hooks/useBlockState";
-import { sumMandates } from "../utils/sumMandates";
+import type { BlockId, BlockState } from "../../types/domain";
+import { useElectionData } from "../../hooks/useElectionData";
+import { useBlockState } from "../../hooks/useBlockState";
+import { sumMandates } from "../../utils/sumMandates";
 import { Header } from "./Header";
 import { Block } from "./Block";
 import { ErrorBanner } from "./ErrorBanner";

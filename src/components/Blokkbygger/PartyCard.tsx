@@ -1,7 +1,7 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import clsx from "clsx";
-import type { Party } from "../types/domain";
+import type { Party } from "../../types/domain";
 import styles from "./PartyCard.module.css";
 
 interface PartyCardProps {

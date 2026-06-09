@@ -1,7 +1,7 @@
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import clsx from "clsx";
-import type { Party, BlockId } from "../types/domain";
+import type { Party, BlockId } from "../../types/domain";
 import { PartyCard } from "./PartyCard";
 import { MandateCounter } from "./MandateCounter";
 import styles from "./Block.module.css";

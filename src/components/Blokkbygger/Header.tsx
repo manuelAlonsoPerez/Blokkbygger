@@ -1,4 +1,4 @@
-import { formatTime } from "../utils/formatTime";
+import { formatTime } from "../../utils/formatTime";
 import styles from "./Header.module.css";
 
 interface HeaderProps {
