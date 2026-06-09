@@ -1,0 +1,48 @@
+.card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.75rem;
+  margin-bottom: 0.375rem;
+  border-radius: 6px;
+  border: 1px solid var(--bb-card-border, #d9e9ff);
+  background: var(--bb-card-bg, #ffffff);
+  cursor: grab;
+  transition: box-shadow 0.15s, background-color 0.1s;
+  user-select: none;
+}
+
+.card:hover {
+  background: var(--bb-card-hover-bg, #f0f5fb);
+  box-shadow: 0 1px 4px rgba(6, 22, 41, 0.08);
+}
+
+.dragging {
+  opacity: 0.6;
+  box-shadow: 0 4px 12px rgba(6, 22, 41, 0.15);
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.name {
+  font-weight: 600;
+  flex: 1;
+  color: var(--bb-text-color, #061629);
+  font-size: 0.9rem;
+}
+
+.mandates {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--bb-text-secondary, #304968);
+}
+
+.percent {
+  font-size: 0.75rem;
+  color: var(--bb-text-tertiary, #7b97ba);
+}

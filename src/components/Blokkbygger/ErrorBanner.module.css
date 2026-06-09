@@ -1,0 +1,10 @@
+.banner {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  background: var(--bb-error-bg, #fef2f2);
+  color: var(--bb-error-text, #991b1b);
+  border: 1px solid var(--bb-error-border, #fecaca);
+  text-align: center;
+  font-size: 0.875rem;
+}

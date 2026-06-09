@@ -1,0 +1,33 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 300px;
+  border: 1px solid var(--bb-border-color, #d9e9ff);
+  border-radius: 8px;
+  padding: 1rem;
+  background: var(--bb-block-bg, #ffffff);
+  transition: border-color 0.15s, background-color 0.15s, box-shadow 0.15s;
+}
+
+.dropTarget {
+  border-color: var(--bb-accent, #1767ce);
+  background: var(--bb-drop-bg, #f0f5fb);
+  box-shadow: 0 0 0 1px var(--bb-accent, #1767ce);
+}
+
+.hasMajority {
+  box-shadow: 0 0 0 2px var(--bb-majority-color, #22c55e);
+}
+
+.title {
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+  color: var(--bb-text-color, #061629);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-size: 0.85rem;
+}
+
+.cards {
+  flex: 1;
+}
