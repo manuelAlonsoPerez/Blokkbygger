@@ -1,10 +1,11 @@
 .root {
-  font-family: var(--bb-font-family, system-ui, sans-serif);
-  color: var(--bb-text-color, #1a1a1a);
+  font-family: var(--bb-font-family, "NRK Sans Variable", system-ui, sans-serif);
+  color: var(--bb-text-color, #061629);
+  background: var(--bb-bg, #eef5ff);
   width: 100%;
   height: 100%;
   box-sizing: border-box;
-  padding: 1rem;
+  padding: 1.5rem;
 }
 
 .grid {
@@ -18,6 +19,6 @@
   align-items: center;
   justify-content: center;
   min-height: 200px;
-  color: var(--bb-text-secondary, #6b7280);
+  color: var(--bb-text-secondary, #304968);
   font-size: 1rem;
 }

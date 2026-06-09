@@ -1,14 +1,16 @@
 .container {
   min-height: 300px;
-  border: 2px solid var(--bb-border-color, #e5e7eb);
+  border: 1px solid var(--bb-border-color, #d9e9ff);
   border-radius: 8px;
   padding: 1rem;
-  transition: border-color 0.15s, background-color 0.15s;
+  background: var(--bb-block-bg, #ffffff);
+  transition: border-color 0.15s, background-color 0.15s, box-shadow 0.15s;
 }
 
 .dropTarget {
-  border-color: var(--bb-accent, #60a5fa);
-  background: var(--bb-drop-bg, #eff6ff);
+  border-color: var(--bb-accent, #1767ce);
+  background: var(--bb-drop-bg, #f0f5fb);
+  box-shadow: 0 0 0 1px var(--bb-accent, #1767ce);
 }
 
 .hasMajority {
@@ -16,7 +18,11 @@
 }
 
 .title {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   font-weight: 700;
   margin: 0 0 0.75rem;
+  color: var(--bb-text-color, #061629);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-size: 0.85rem;
 }
