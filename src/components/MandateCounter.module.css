@@ -1,0 +1,22 @@
+.counter {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.noMajority {
+  background: var(--bb-counter-bg, #f3f4f6);
+  color: var(--bb-counter-text, #374151);
+}
+
+.majority {
+  background: var(--bb-majority-bg, #dcfce7);
+  color: var(--bb-majority-text, #166534);
+}
+
+.check {
+  margin-left: 0.5rem;
+}

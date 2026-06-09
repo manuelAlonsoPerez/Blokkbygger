@@ -1,0 +1,23 @@
+.root {
+  font-family: var(--bb-font-family, system-ui, sans-serif);
+  color: var(--bb-text-color, #1a1a1a);
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 1rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: var(--bb-text-secondary, #6b7280);
+  font-size: 1rem;
+}

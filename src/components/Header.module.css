@@ -1,0 +1,16 @@
+.header {
+  padding: 1rem 0;
+  text-align: center;
+}
+
+.title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+}
+
+.timestamp {
+  font-size: 0.8rem;
+  color: var(--bb-text-secondary, #6b7280);
+  margin: 0;
+}

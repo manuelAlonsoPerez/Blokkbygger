@@ -1,0 +1,22 @@
+.container {
+  min-height: 300px;
+  border: 2px solid var(--bb-border-color, #e5e7eb);
+  border-radius: 8px;
+  padding: 1rem;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.dropTarget {
+  border-color: var(--bb-accent, #60a5fa);
+  background: var(--bb-drop-bg, #eff6ff);
+}
+
+.hasMajority {
+  box-shadow: 0 0 0 2px var(--bb-majority-color, #22c55e);
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+}
