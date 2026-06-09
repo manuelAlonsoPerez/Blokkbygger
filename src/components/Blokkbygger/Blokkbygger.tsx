@@ -11,6 +11,7 @@ import type { BlockId, BlockState } from "../../types/domain";
 import { useElectionData } from "../../hooks/useElectionData";
 import { useBlockState } from "../../hooks/useBlockState";
 import { sumMandates } from "../../utils/sumMandates";
+import { DEFAULT_MAJORITY_FALLBACK, DRAG_ACTIVATION_DISTANCE_PX } from "../../config";
 import { Header } from "./Header";
 import { Block } from "./Block";
 import { ErrorBanner } from "./ErrorBanner";
@@ -44,11 +45,11 @@ export function Blokkbygger({
   } = useElectionData(apiUrl, pollIntervalMs);
 
   const majorityThreshold =
-    manualThreshold ?? (totalMandates > 0 ? Math.ceil(totalMandates / 2) : 85);
+    manualThreshold ?? (totalMandates > 0 ? Math.ceil(totalMandates / 2) : DEFAULT_MAJORITY_FALLBACK);
   const { blocks, moveParty } = useBlockState(parties, initialBlocks);
 
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(PointerSensor, { activationConstraint: { distance: DRAG_ACTIVATION_DISTANCE_PX } }),
     useSensor(KeyboardSensor),
   );
 

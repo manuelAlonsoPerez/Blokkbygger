@@ -2,11 +2,12 @@ import { createRoot, Root } from "react-dom/client";
 import { createElement } from "react";
 import { Blokkbygger } from "./components/Blokkbygger";
 import type { BlokkbyggerConfig, BlokkbyggerInstance } from "./types/domain";
+import { API_URL, POLL_INTERVAL_MS, DEFAULT_LOCALE } from "./config";
 
 const DEFAULTS: Required<Omit<BlokkbyggerConfig, "initialBlocks" | "onBlockChange" | "majorityThreshold">> = {
-  apiUrl: "https://valg.nrk.no/api/2025/st",
-  pollIntervalMs: 30_000,
-  locale: "nb",
+  apiUrl: API_URL,
+  pollIntervalMs: POLL_INTERVAL_MS,
+  locale: DEFAULT_LOCALE,
 };
 
 export function mount(

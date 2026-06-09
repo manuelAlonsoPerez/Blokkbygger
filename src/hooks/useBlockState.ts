@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import type { Party, BlockId, BlockState } from "../types/domain";
+import { DEFAULT_LEFT_PARTIES, DEFAULT_RIGHT_PARTIES } from "../config";
 
 const EMPTY_BLOCKS: BlockState = { left: [], neutral: [], right: [] };
 
-const DEFAULT_LEFT = new Set(["RØDT", "SV", "A", "MDG"]);
-const DEFAULT_RIGHT = new Set(["V", "H", "FRP", "KRF"]);
+const DEFAULT_LEFT = new Set(DEFAULT_LEFT_PARTIES);
+const DEFAULT_RIGHT = new Set(DEFAULT_RIGHT_PARTIES);
 
 function allBlocksEmpty(blocks: BlockState): boolean {
   return (
