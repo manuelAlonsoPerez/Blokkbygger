@@ -1,4 +1,6 @@
 .container {
+  display: flex;
+  flex-direction: column;
   min-height: 300px;
   border: 1px solid var(--bb-border-color, #d9e9ff);
   border-radius: 8px;
@@ -18,11 +20,14 @@
 }
 
 .title {
-  font-size: 1.1rem;
   font-weight: 700;
   margin: 0 0 0.75rem;
   color: var(--bb-text-color, #061629);
   text-transform: uppercase;
   letter-spacing: 0.03em;
   font-size: 0.85rem;
+}
+
+.cards {
+  flex: 1;
 }

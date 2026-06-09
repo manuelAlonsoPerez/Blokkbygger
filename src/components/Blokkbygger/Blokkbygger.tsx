@@ -82,6 +82,7 @@ export function Blokkbygger({
   }
 
   const leftTotal = sumMandates(blocks.left, parties);
+  const neutralTotal = sumMandates(blocks.neutral, parties);
   const rightTotal = sumMandates(blocks.right, parties);
 
   if (isLoading && parties.length === 0) {
@@ -99,6 +100,8 @@ export function Blokkbygger({
           lastUpdated={lastUpdated}
           turnoutPercent={turnoutPercent}
           countedPercent={countedPercent}
+          totalMandates={totalMandates}
+          majorityThreshold={majorityThreshold}
         />
         <div className={styles.grid}>
           <Block
@@ -107,6 +110,7 @@ export function Blokkbygger({
             partyIds={blocks.left}
             parties={parties}
             totalMandates={leftTotal}
+            totalMandatesInElection={totalMandates}
             majorityThreshold={majorityThreshold}
             hasMajority={leftTotal >= majorityThreshold}
           />
@@ -115,6 +119,8 @@ export function Blokkbygger({
             label="Nøytral"
             partyIds={blocks.neutral}
             parties={parties}
+            totalMandates={neutralTotal}
+            totalMandatesInElection={totalMandates}
           />
           <Block
             id="right"
@@ -122,6 +128,7 @@ export function Blokkbygger({
             partyIds={blocks.right}
             parties={parties}
             totalMandates={rightTotal}
+            totalMandatesInElection={totalMandates}
             majorityThreshold={majorityThreshold}
             hasMajority={rightTotal >= majorityThreshold}
           />

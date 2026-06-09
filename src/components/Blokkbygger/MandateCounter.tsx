@@ -3,14 +3,16 @@ import styles from "./MandateCounter.module.css";
 
 interface MandateCounterProps {
   total: number;
-  threshold: number;
-  hasMajority: boolean;
+  outOf: number;
+  threshold?: number;
+  hasMajority?: boolean;
 }
 
 export function MandateCounter({
   total,
+  outOf,
   threshold,
-  hasMajority,
+  hasMajority = false,
 }: MandateCounterProps) {
   return (
     <div
@@ -19,8 +21,12 @@ export function MandateCounter({
         hasMajority ? styles.majority : styles.noMajority,
       )}
     >
-      {total} / {threshold} mandater
-      {hasMajority && <span className={styles.check}>&#10003; Flertall</span>}
+      <span>
+        <strong>{total}</strong> / {outOf} mandater
+      </span>
+      {threshold !== undefined && hasMajority && (
+        <span className={styles.check}>&#10003; Flertall</span>
+      )}
     </div>
   );
 }
