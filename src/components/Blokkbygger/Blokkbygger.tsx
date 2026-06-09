@@ -33,8 +33,15 @@ export function Blokkbygger({
   majorityThreshold: manualThreshold,
   onBlockChange,
 }: BlokkbyggerProps) {
-  const { parties, totalMandates, lastUpdated, isLoading, error } =
-    useElectionData(apiUrl, pollIntervalMs);
+  const {
+    parties,
+    totalMandates,
+    turnoutPercent,
+    countedPercent,
+    lastUpdated,
+    isLoading,
+    error,
+  } = useElectionData(apiUrl, pollIntervalMs);
 
   const majorityThreshold =
     manualThreshold ?? (totalMandates > 0 ? Math.ceil(totalMandates / 2) : 85);
@@ -88,7 +95,11 @@ export function Blokkbygger({
   return (
     <div className={styles.root}>
       <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-        <Header lastUpdated={lastUpdated} />
+        <Header
+          lastUpdated={lastUpdated}
+          turnoutPercent={turnoutPercent}
+          countedPercent={countedPercent}
+        />
         <div className={styles.grid}>
           <Block
             id="left"

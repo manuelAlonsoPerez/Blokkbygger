@@ -6,6 +6,8 @@ import { transformApiData } from "../utils/transformApiData";
 interface UseElectionDataResult {
   parties: Party[];
   totalMandates: number;
+  turnoutPercent: number;
+  countedPercent: number;
   lastUpdated: string | null;
   isLoading: boolean;
   error: string | null;
@@ -17,6 +19,8 @@ export function useElectionData(
 ): UseElectionDataResult {
   const [parties, setParties] = useState<Party[]>([]);
   const [totalMandates, setTotalMandates] = useState(0);
+  const [turnoutPercent, setTurnoutPercent] = useState(0);
+  const [countedPercent, setCountedPercent] = useState(0);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -30,6 +34,8 @@ export function useElectionData(
       const transformed = transformApiData(data);
       setParties(transformed);
       setTotalMandates(data.mandater.antall);
+      setTurnoutPercent(data.frammote.prosent);
+      setCountedPercent(data.opptaltProsent);
       setLastUpdated(data.tidspunkt.rapportGenerert);
       setError(null);
     } catch {
@@ -45,5 +51,5 @@ export function useElectionData(
     return () => clearInterval(interval);
   }, [fetchData, pollIntervalMs]);
 
-  return { parties, totalMandates, lastUpdated, isLoading, error };
+  return { parties, totalMandates, turnoutPercent, countedPercent, lastUpdated, isLoading, error };
 }

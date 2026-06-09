@@ -13,6 +13,7 @@ export interface ElectionResponse {
   };
   mandater: { antall: number; endring: number };
   antallStemmer: number;
+  frammote: { prosent: number };
   opptaltProsent: number;
   partier: ApiParty[];
 }
