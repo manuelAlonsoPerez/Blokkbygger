@@ -69,7 +69,8 @@ This installs all runtime and development dependencies, including:
 - **@dnd-kit/core**, **@dnd-kit/sortable**, **@dnd-kit/utilities** (drag and drop)
 - **clsx** (conditional class names)
 - **Vite 6** (build tool)
-- **Playwright** and **Vitest** (testing)
+- **Vitest 3** + **@testing-library/react** + **jsdom** (unit and integration tests)
+- **Playwright** (end-to-end browser tests)
 
 ### 3. Install Playwright browsers
 
@@ -135,31 +136,51 @@ Serves the built output locally to verify the production bundle works correctly.
 
 ## Testing
 
+### Run unit and integration tests (Vitest)
+
+```bash
+# Run all tests once
+npm test
+
+# Watch mode (re-runs on file changes)
+npm run test:watch
+
+# Run a specific test file
+npx vitest run tests/utils/transformApiData.test.ts
+```
+
+The test suite covers three areas:
+
+| File | What it tests |
+|---|---|
+| `tests/utils/transformApiData.test.ts` | Data transformation — category filtering, Andre aggregation, NaN guards, rounding |
+| `tests/hooks/useElectionData.test.ts` | API hook — fetch on mount, metadata extraction, HTTP/network errors, data preservation on failure, error recovery, polling interval, unmount cleanup |
+| `tests/components/ErrorHandling.test.tsx` | UI integration — loading state, party card rendering, ErrorBanner on API failure, graceful degradation (data persists while error shows), banner removal on recovery, header stats |
+
 ### Run end-to-end tests (Playwright)
 
 ```bash
-# Run all E2E tests (headless)
+# Run all E2E tests (headless, Chromium)
 npm run test:e2e
 
 # Run with browser visible
 npx playwright test --headed
 
-# Run a specific test file
-npx playwright test tests/e2e/blokkbygger.spec.ts
-
 # Open the interactive UI mode
 npm run test:e2e:ui
 ```
 
-### Run unit tests (Vitest)
+The E2E suite uses Playwright's route interception to mock the NRK API for deterministic results:
 
-```bash
-# Run once
-npm test
-
-# Watch mode (re-runs on file changes)
-npm run test:watch
-```
+| Describe block | What it tests |
+|---|---|
+| `tests/e2e/blokkbygger.spec.ts` — Component loading | Party cards render, three block sections visible, block labels displayed |
+| Header | Title, election stats (Frammøte, Opptalt, Mandater, Flertall), timestamp format |
+| Default block distribution | Left-wing parties in Venstre, right-wing in Høyre, remaining in Nøytral |
+| Mandate counters | Block mandate sums (72, 68), `/169 mandater` display, no majority initially |
+| Party cards | Card content (name, mandates, percentage), ARIA accessibility attributes |
+| Drag and drop | Move SP from Nøytral → Venstre, move MDG from Venstre → Høyre (real mouse drag) |
+| Error handling | Error banner on HTTP 500, recovery after failure, graceful degradation (data persists alongside error) |
 
 ### View test reports
 
@@ -170,6 +191,16 @@ npx playwright show-report
 # Vitest coverage (if configured)
 npx vitest run --coverage
 ```
+
+### Test output
+
+All tests include colored console output with structured logging:
+
+- **` SUITE `** — marks each test suite
+- **` TEST `** — names each spec
+- **`→`** — describes each step
+- **`↳`** — shows inspected data values
+- **` PASS `** — confirms the result
 
 ---
 
@@ -249,6 +280,7 @@ The full list of CSS custom properties is documented in `HIGH_ORDER_FUNCTIONALIT
 src/
 ├── index.ts                           # Library entry point (exports mount + types)
 ├── mount.ts                           # mount/unmount/update API implementation
+├── config.ts                          # Centralized constants (API URL, defaults, party IDs)
 ├── components/
 │   └── Blokkbygger/
 │       ├── index.ts                   # Barrel export
@@ -279,8 +311,21 @@ dev/
 └── main.tsx                           # Dev harness (not included in build)
 
 tests/
-├── e2e/                               # Playwright end-to-end tests
-└── fixtures/                          # Mock API data
+├── setup.ts                           # Vitest setup (jest-dom matchers)
+├── fixtures/
+│   └── electionData.ts                # Mock API responses (success, empty, null %)
+├── utils/
+│   ├── testLogger.ts                  # Colored console logger (SUITE/TEST/STEP/PASS)
+│   └── transformApiData.test.ts       # Data transformation unit tests (7 tests)
+├── hooks/
+│   └── useElectionData.test.ts        # API hook unit tests (14 tests)
+├── components/
+│   └── ErrorHandling.test.tsx         # UI integration tests (9 tests)
+└── e2e/
+    └── blokkbygger.spec.ts            # Playwright E2E tests (19 tests)
+
+vitest.config.ts                       # Vitest config (jsdom, CSS modules, excludes e2e)
+playwright.config.ts                   # Playwright config (Chromium, auto dev server)
 ```
 
 ---
@@ -294,6 +339,18 @@ tests/
 | `npm run preview` | Preview production build locally |
 | `npm test` | Run unit tests (single run) |
 | `npm run test:watch` | Run unit tests (watch mode) |
-| `npm run test:e2e` | Run Playwright E2E tests |
+| `npm run test:e2e` | Run Playwright E2E tests (Chromium) |
 | `npm run test:e2e:ui` | Run Playwright E2E tests (interactive UI) |
 | `npx tsc --noEmit` | Type-check without emitting files |
+
+---
+
+## Test Summary
+
+| Layer | File | Tests | What it covers |
+|---|---|---|---|
+| Unit | `transformApiData.test.ts` | 7 | Category filtering, Andre aggregation, NaN guards, rounding, order |
+| Unit | `useElectionData.test.ts` | 14 | Fetch, metadata, HTTP/network errors, data preservation, recovery, polling, cleanup |
+| Integration | `ErrorHandling.test.tsx` | 9 | Loading, rendering, ErrorBanner, graceful degradation, recovery, header stats |
+| E2E | `blokkbygger.spec.ts` | 19 | Full browser: loading, blocks, drag-and-drop, mandate counters, accessibility, errors |
+| **Total** | | **49** | |
